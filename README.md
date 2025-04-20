@@ -1,10 +1,11 @@
 # PostgreSQL Docker Compose
 
-## Service Info
-| Service    | Version | Port       | Account   | Password |
-|------------|---------|------------|-----------|----------|
-| PostgreSQL | latest  | 5432:5432  | postgres  | 0000     |
-| pgBouncer  | latest  | 6432:6432  | pgbouncer | 0000     |
+## Container Info
+| Container      | Version | Port       | Account   | Password |
+|----------------|---------|------------|-----------|----------|
+| postgresql     | latest  | 5432:5432  | postgres  | 0000     |
+| pgbouncer      | latest  | 6432:6432  | pgbouncer | 0000     |
+| pgbench-client | latest  | -          | -         | -        |
 
 ## Command
 
@@ -33,3 +34,17 @@ docker-compose down
 2. userlist.txt
 
     檔案格式是一行為一組帳密。
+
+## pgbench
+單純想使用 PostgreSQL 的 pgbench 工具，用來測試連線 5432/6432 Port 的差異。
+
+```bash
+docker exec -it pgbench-client bash
+```
+```bash
+pgbench -i --host postgres-db --port 5432 -U postgres test_database
+pgbench --host postgres-db --port 5432 -U postgres -t 50 -c 10 -v -C test_database
+
+pgbench -i --host pgbouncer --port 6432 -U postgres test_database
+pgbench --host pgbouncer --port 6432 -U postgres -t 50 -c 10 -v -C test_database
+```
