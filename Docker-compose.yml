@@ -1,0 +1,38 @@
+services:
+  postgres-db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "0000"
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres-db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres-network
+  pgbouncer:
+    image: bitnami/pgbouncer:latest
+    restart: always
+    environment:
+      POSTGRESQL_HOST: postgres-db
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: postgres
+      POSTGRESQL_USER: postgres
+      POSTGRESQL_PASSWORD: "0000"
+      PGBOUNCER_USER: pgbouncer
+      PGBOUNCER_PASSWORD: "0000"
+      PGBOUNCER_PORT: 6432
+    volumes:
+      - ./pgBouncerConfig:/bitnami/pgbouncer/conf
+    ports:
+      - "6432:6432"
+    networks:
+      - postgres-network
+volumes:
+  postgres-db_data: 
+networks:
+  postgres-network:
+    driver: bridge
