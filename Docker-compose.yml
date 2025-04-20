@@ -1,6 +1,7 @@
 services:
   postgres-db:
     image: postgres:latest
+    container_name: postgresql
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -15,6 +16,7 @@ services:
       - postgres-network
   pgbouncer:
     image: bitnami/pgbouncer:latest
+    container_name: pgbouncer
     restart: always
     environment:
       POSTGRESQL_HOST: postgres-db
@@ -29,6 +31,15 @@ services:
       - ./pgBouncerConfig:/bitnami/pgbouncer/conf
     ports:
       - "6432:6432"
+    networks:
+      - postgres-network
+  pgbench-client:
+    image: postgres:latest
+    container_name: pgbench-client
+    depends_on:
+      - postgres-db
+      - pgbouncer
+    entrypoint: ["sleep", "infinity"]
     networks:
       - postgres-network
 volumes:
