@@ -1,8 +1,17 @@
 services:
   postgres-db:
-    image: postgres:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: postgresql
     restart: always
+    command: >
+      postgres
+      -c max_locks_per_transaction=128
+      -c shared_preload_libraries=pg_partman_bgw
+      -c pg_partman_bgw.role=postgres
+      -c pg_partman_bgw.dbname=postgres,test_database
+      -c pg_partman_bgw.interval=3600
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "0000"
@@ -31,15 +40,6 @@ services:
       - ./pgBouncerConfig:/bitnami/pgbouncer/conf
     ports:
       - "6432:6432"
-    networks:
-      - postgres-network
-  pgbench-client:
-    image: postgres:latest
-    container_name: pgbench-client
-    depends_on:
-      - postgres-db
-      - pgbouncer
-    entrypoint: ["sleep", "infinity"]
     networks:
       - postgres-network
 volumes:
