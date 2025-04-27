@@ -8,10 +8,11 @@ services:
     command: >
       postgres
       -c max_locks_per_transaction=128
-      -c shared_preload_libraries=pg_partman_bgw
+      -c shared_preload_libraries=pg_partman_bgw,timescaledb
       -c pg_partman_bgw.role=postgres
       -c pg_partman_bgw.dbname=postgres,test_database
       -c pg_partman_bgw.interval=3600
+      && sudo timescaledb-tune --quiet --yes --dry-run >> /var/lib/postgresql/data/postgresql.conf
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "0000"
@@ -24,7 +25,7 @@ services:
     networks:
       - postgres-network
   pgbouncer:
-    image: bitnami/pgbouncer:latest
+    image: bitnami/pgbouncer:1.24.1
     container_name: pgbouncer
     restart: always
     environment:
