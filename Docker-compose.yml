@@ -12,12 +12,13 @@ services:
       -c pg_partman_bgw.role=postgres
       -c pg_partman_bgw.dbname=postgres,test_database
       -c pg_partman_bgw.interval=3600
-      && sudo timescaledb-tune --quiet --yes --dry-run >> /var/lib/postgresql/data/postgresql.conf
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "0000"
       POSTGRES_DB: postgres
       PGDATA: /var/lib/postgresql/data
+      TZ: Asia/Taipei
+      PGTZ: Asia/Taipei
     volumes:
       - postgres-db_data:/var/lib/postgresql/data
     ports:
